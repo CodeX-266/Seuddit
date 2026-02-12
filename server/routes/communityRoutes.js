@@ -79,4 +79,38 @@ router.get("/", async (req, res) => {
   }
 });
 
+
+router.delete("/:id", authMiddleware, async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Check if user is owner
+    const membership = await pool.query(
+      `SELECT role FROM community_members
+       WHERE user_id = $1 AND community_id = $2`,
+      [req.user.userId, id]
+    );
+
+    if (
+      membership.rows.length === 0 ||
+      membership.rows[0].role !== "owner"
+    ) {
+      return res.status(403).json({ message: "Not authorized" });
+    }
+
+    await pool.query(
+      `UPDATE communities
+       SET deleted_at = NOW()
+       WHERE id = $1`,
+      [id]
+    );
+
+    res.json({ message: "Community soft deleted" });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
 module.exports = router;

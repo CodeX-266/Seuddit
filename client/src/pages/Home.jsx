@@ -22,7 +22,6 @@ function Home() {
     fetchCommunities();
   }, []);
 
-  // Simple Nav Link component for reusability and active states
   const NavLink = ({ to, icon: Icon, children }) => {
     const isActive = location.pathname === to;
     return (
@@ -41,11 +40,22 @@ function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-[#f9fafb] text-gray-900 selection:bg-blue-100">
-      <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-10 px-6 py-10">
+    <div className="min-h-screen text-gray-900 selection:bg-blue-100 relative overflow-hidden bg-[#f0f2f5]">
+      
+      {/* Updated Crazy Random Doodle Background */}
+      <div 
+        className="absolute inset-0 opacity-[0.07] pointer-events-none z-0"
+        style={{
+          backgroundImage: `url("data:image/svg+xml,%3Csvg width='150' height='150' viewBox='0 0 150 150' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23000' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M10 20l5 5m-5 0l5-5M40 10l3 7h8l-6 5 2 8-7-5-7 5 2-8-6-5h8zM80 15c0 6-4 10-10 10s-10-4-10-10 4-10 10-10 10 4 10 10zM120 10l10 20-15-5zM20 60s5-10 15-5 15 10 25 5M85 50l10 10m0-10l-10 10M125 65l-8 4 4 8 8-4zM10 110h20M10 118h20M10 126h20M60 110c0 10 15 10 15 0s15-10 15 0M120 120a10 10 0 1 0 20 0 10 10 0 1 0-20 0zM45 85l5-15 5 15-10-10 10 0z'/%3E%3C/g%3E%3C/svg%3E")`,
+          backgroundRepeat: 'repeat',
+        }}
+      ></div>
+
+      {/* Content Layer */}
+      <div className="relative z-10 w-full grid grid-cols-1 md:grid-cols-12 gap-6 px-10 py-10">
         
         {/* Left Sidebar */}
-        <aside className="hidden md:block md:col-span-2">
+        <aside className="hidden md:block md:col-span-2 pl-4">
           <div className="sticky top-10 space-y-8">
             <nav className="space-y-1">
               <p className="text-[11px] font-semibold uppercase text-gray-400 mb-4 tracking-wider px-3">
@@ -63,7 +73,7 @@ function Home() {
         </aside>
 
         {/* Main Feed */}
-        <main className="md:col-span-7">
+        <main className="md:col-span-7 bg-white/80 backdrop-blur-sm rounded-xl p-6 shadow-sm border border-gray-200">
           <div className="mb-8">
             <h1 className="text-2xl font-bold tracking-tight text-gray-900">
               Communities
@@ -75,7 +85,6 @@ function Home() {
 
           <div className="space-y-3">
             {isLoading ? (
-              // Skeleton Loader
               [1, 2, 3].map((n) => (
                 <div key={n} className="h-28 w-full bg-gray-200 animate-pulse rounded-lg" />
               ))
@@ -118,7 +127,7 @@ function Home() {
         </main>
 
         {/* Right Panel */}
-        <aside className="hidden lg:block lg:col-span-3">
+        <aside className="hidden lg:block lg:col-span-3 pr-4">
           <div className="sticky top-10 space-y-6">
             <section className="bg-white border border-gray-200 rounded-lg p-5">
               <h3 className="text-sm font-bold text-gray-900 mb-3">

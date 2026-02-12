@@ -1,61 +1,68 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import api from "../api/axios";
-import { Lock, Mail, ArrowRight, Loader2 } from "lucide-react"; // npm i lucide-react
+import { Lock, Mail, ArrowRight, Loader2, ShieldCheck } from "lucide-react";
 
 function Login({ setToken }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
     setLoading(true);
+    setError("");
     try {
       const res = await api.post("/auth/login", { email, password });
       localStorage.setItem("token", res.data.token);
       setToken(res.data.token);
       navigate("/");
     } catch (err) {
-      alert("Invalid credentials");
+      setError("The email or password you entered is incorrect.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-white flex items-center justify-center px-6 relative overflow-hidden">
-      
-      {/* Background Decorative Elements */}
-      <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-indigo-600/10 blur-[120px] rounded-full"></div>
-      <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-indigo-900/10 blur-[120px] rounded-full"></div>
-
-      <div className="w-full max-w-md z-10">
-        {/* Logo/Brand Area */}
+    <div className="min-h-screen bg-[#f9fafb] text-gray-900 flex items-center justify-center px-6">
+      <div className="w-full max-w-[400px]">
+        
+        {/* Brand Area */}
         <div className="text-center mb-10">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-indigo-600 mb-4 shadow-[0_0_30px_rgba(79,70,229,0.3)]">
-            <Lock className="text-white" size={32} />
+          <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-gray-900 text-white mb-6">
+            <ShieldCheck size={28} />
           </div>
-          <h2 className="text-4xl font-bold tracking-tight bg-gradient-to-b from-white to-gray-500 bg-clip-text text-transparent">
-            Welcome Back
+          <h2 className="text-2xl font-bold tracking-tight text-gray-900">
+            Sign in to CampusSphere
           </h2>
-          <p className="text-gray-500 mt-2">Enter your credentials to access CampusSphere</p>
+          <p className="text-gray-500 mt-2 text-sm font-medium">
+            Enter your university credentials to continue
+          </p>
         </div>
 
         {/* Form Card */}
-        <div className="bg-white/[0.03] border border-white/10 p-8 rounded-3xl backdrop-blur-xl shadow-2xl">
-          <form onSubmit={handleLogin} className="space-y-6">
-            
+        <div className="bg-white border border-gray-200 p-8 rounded-2xl shadow-sm">
+          {error && (
+            <div className="mb-6 p-3 bg-red-50 border border-red-100 rounded-lg text-red-600 text-xs font-medium text-center">
+              {error}
+            </div>
+          )}
+
+          <form onSubmit={handleLogin} className="space-y-5">
             {/* Email Input */}
             <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-400 ml-1">Email Address</label>
+              <label className="text-[11px] font-bold text-gray-400 uppercase tracking-widest ml-1">
+                University Email
+              </label>
               <div className="relative group">
-                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-indigo-400 transition-colors" size={20} />
+                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-blue-600 transition-colors" size={18} />
                 <input
                   type="email"
                   placeholder="name@university.edu"
-                  className="w-full pl-12 pr-4 py-3.5 bg-black/40 border border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 transition-all placeholder:text-gray-600"
+                  className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-4 focus:ring-blue-50 focus:border-blue-500 focus:bg-white transition-all placeholder:text-gray-400"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
@@ -66,15 +73,19 @@ function Login({ setToken }) {
             {/* Password Input */}
             <div className="space-y-2">
               <div className="flex justify-between items-center px-1">
-                <label className="text-sm font-medium text-gray-400">Password</label>
-                <a href="#" className="text-xs text-indigo-400 hover:text-indigo-300 transition-colors">Forgot password?</a>
+                <label className="text-[11px] font-bold text-gray-400 uppercase tracking-widest">
+                  Password
+                </label>
+                <a href="#" className="text-[11px] font-bold text-blue-600 hover:underline">
+                  Forgot?
+                </a>
               </div>
               <div className="relative group">
-                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-indigo-400 transition-colors" size={20} />
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-blue-600 transition-colors" size={18} />
                 <input
                   type="password"
                   placeholder="••••••••"
-                  className="w-full pl-12 pr-4 py-3.5 bg-black/40 border border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 transition-all placeholder:text-gray-600"
+                  className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-4 focus:ring-blue-50 focus:border-blue-500 focus:bg-white transition-all placeholder:text-gray-400"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
@@ -86,28 +97,33 @@ function Login({ setToken }) {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-4 rounded-xl shadow-[0_0_20px_rgba(79,70,229,0.3)] transition-all flex items-center justify-center gap-2 group disabled:opacity-70"
+              className="w-full bg-gray-900 hover:bg-gray-800 text-white font-bold py-3 rounded-lg transition-all flex items-center justify-center gap-2 disabled:opacity-50"
             >
               {loading ? (
-                <Loader2 className="animate-spin" size={20} />
+                <Loader2 className="animate-spin" size={18} />
               ) : (
                 <>
                   Sign In
-                  <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
+                  <ArrowRight size={18} />
                 </>
               )}
             </button>
           </form>
 
-          <div className="mt-8 text-center pt-6 border-t border-white/5">
-            <p className="text-gray-500 text-sm">
-              Don’t have an account?{" "}
-              <Link to="/register" className="text-indigo-400 font-semibold hover:text-indigo-300 transition-colors">
-                Create account
+          <div className="mt-8 text-center pt-6 border-t border-gray-100">
+            <p className="text-gray-400 text-xs font-medium">
+              New to the platform?{" "}
+              <Link to="/register" className="text-blue-600 font-bold hover:underline">
+                Create an account
               </Link>
             </p>
           </div>
         </div>
+
+        {/* Footer info */}
+        <p className="mt-10 text-center text-[11px] text-gray-400 uppercase tracking-widest font-semibold">
+          Secure Academic Environment • 2026
+        </p>
       </div>
     </div>
   );

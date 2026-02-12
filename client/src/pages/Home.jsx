@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import api from "../api/axios";
-import { ArrowRight, Users, MessageSquare, Globe } from "lucide-react"; // Optional: npm i lucide-react
+import { MessageSquare, Users, Home as HomeIcon, Compass, Plus } from "lucide-react";
 
 function Home() {
   const [communities, setCommunities] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const location = useLocation();
 
   useEffect(() => {
     const fetchCommunities = async () => {
@@ -13,89 +15,138 @@ function Home() {
         setCommunities(res.data);
       } catch (err) {
         console.error("Failed to fetch", err);
+      } finally {
+        setIsLoading(false);
       }
     };
     fetchCommunities();
   }, []);
 
+  // Simple Nav Link component for reusability and active states
+  const NavLink = ({ to, icon: Icon, children }) => {
+    const isActive = location.pathname === to;
+    return (
+      <Link
+        to={to}
+        className={`flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+          isActive 
+            ? "bg-gray-200 text-gray-900" 
+            : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
+        }`}
+      >
+        <Icon size={18} strokeWidth={isActive ? 2.5 : 2} />
+        {children}
+      </Link>
+    );
+  };
+
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-white selection:bg-indigo-500/30">
-      
-      {/* Background Glow Effect */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-6xl h-[500px] bg-indigo-600/10 blur-[120px] rounded-full pointer-events-none"></div>
-
-      {/* Hero Section */}
-      <section className="relative pt-32 pb-20 text-center px-6">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs font-medium text-indigo-400 mb-8 animate-fade-in">
-          <span className="relative flex h-2 w-2">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-indigo-500"></span>
-          </span>
-          Connecting Campus Life
-        </div>
-
-        <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight mb-6 bg-gradient-to-b from-white to-white/50 bg-clip-text text-transparent">
-          CampusSphere
-        </h1>
-
-        <p className="text-gray-400 max-w-xl mx-auto text-lg leading-relaxed mb-10">
-          A unified ecosystem for structured discussions, transparent
-          communication, and institutional clarity.
-        </p>
-
-        <div className="flex items-center justify-center gap-4">
-          <button className="px-8 py-3 bg-white text-black font-semibold rounded-full hover:bg-gray-200 transition-all">
-            Get Started
-          </button>
-          <button className="px-8 py-3 bg-white/5 border border-white/10 font-semibold rounded-full hover:bg-white/10 transition-all">
-            Documentation
-          </button>
-        </div>
-      </section>
-
-      {/* Communities Section */}
-      <section className="max-w-6xl mx-auto px-6 pb-32 relative">
-        <div className="flex items-end justify-between mb-12">
-          <div>
-            <h2 className="text-3xl font-bold mb-2">Explore Communities</h2>
-            <p className="text-gray-500">Join the conversation in your favorite circles.</p>
-          </div>
-          <Link to="/all" className="text-indigo-400 hover:text-indigo-300 flex items-center gap-1 text-sm font-medium transition-all">
-            View all <ArrowRight size={16} />
-          </Link>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {communities.map((community) => (
-            <Link
-              key={community.id}
-              to={`/community/${community.id}`}
-              className="group relative bg-white/[0.03] border border-white/10 p-6 rounded-2xl transition-all duration-500 hover:bg-white/[0.06] hover:border-indigo-500/50 hover:-translate-y-1"
-            >
-              <div className="mb-4 w-12 h-12 rounded-xl bg-indigo-500/10 flex items-center justify-center text-indigo-400 group-hover:bg-indigo-500 group-hover:text-white transition-colors">
-                <Users size={24} />
-              </div>
-              
-              <h3 className="text-xl font-bold mb-2 group-hover:text-indigo-300 transition-colors">
-                {community.name}
-              </h3>
-              
-              <p className="text-gray-400 text-sm leading-relaxed mb-6 line-clamp-2">
-                {community.description || "No description provided for this community."}
+    <div className="min-h-screen bg-[#f9fafb] text-gray-900 selection:bg-blue-100">
+      <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-10 px-6 py-10">
+        
+        {/* Left Sidebar */}
+        <aside className="hidden md:block md:col-span-2">
+          <div className="sticky top-10 space-y-8">
+            <nav className="space-y-1">
+              <p className="text-[11px] font-semibold uppercase text-gray-400 mb-4 tracking-wider px-3">
+                Feeds
               </p>
+              <NavLink to="/" icon={HomeIcon}>Home</NavLink>
+              <NavLink to="/all" icon={Compass}>Explore</NavLink>
+            </nav>
 
-              <div className="flex items-center gap-4 text-xs text-gray-500 font-medium">
-                <span className="flex items-center gap-1">
-                  <MessageSquare size={14} /> 24 Posts
-                </span>
-                <span className="flex items-center gap-1">
-                  <Globe size={14} /> Public
-                </span>
+            <button className="w-full flex items-center justify-center gap-2 py-2 px-4 bg-white border border-gray-200 rounded-md text-sm font-medium hover:border-gray-300 transition shadow-sm">
+              <Plus size={16} />
+              New Circle
+            </button>
+          </div>
+        </aside>
+
+        {/* Main Feed */}
+        <main className="md:col-span-7">
+          <div className="mb-8">
+            <h1 className="text-2xl font-bold tracking-tight text-gray-900">
+              Communities
+            </h1>
+            <p className="text-gray-500 mt-1 font-serif">
+              Discover student-led discussions and shared interests.
+            </p>
+          </div>
+
+          <div className="space-y-3">
+            {isLoading ? (
+              // Skeleton Loader
+              [1, 2, 3].map((n) => (
+                <div key={n} className="h-28 w-full bg-gray-200 animate-pulse rounded-lg" />
+              ))
+            ) : communities.length > 0 ? (
+              communities.map((community) => (
+                <Link
+                  key={community.id}
+                  to={`/community/${community.id}`}
+                  className="group block border border-gray-200 bg-white rounded-lg p-5 transition-all hover:border-gray-400 hover:shadow-sm"
+                >
+                  <div className="flex justify-between items-start">
+                    <div className="max-w-[80%]">
+                      <h2 className="text-lg font-semibold text-gray-900 group-hover:text-blue-700 transition-colors">
+                        {community.name}
+                      </h2>
+                      <p className="text-sm text-gray-500 mt-1.5 leading-relaxed line-clamp-2">
+                        {community.description || "Connect with peers in this space."}
+                      </p>
+                    </div>
+
+                    <div className="flex flex-col items-end gap-2 text-gray-400">
+                      <div className="flex items-center gap-1.5 text-[13px]">
+                        <span className="font-medium text-gray-600">{community.member_count || 0}</span>
+                        <Users size={14} />
+                      </div>
+                      <div className="flex items-center gap-1.5 text-[13px]">
+                        <span className="font-medium text-gray-600">{community.post_count || 0}</span>
+                        <MessageSquare size={14} />
+                      </div>
+                    </div>
+                  </div>
+                </Link>
+              ))
+            ) : (
+              <div className="text-center py-20 border-2 border-dashed border-gray-200 rounded-xl">
+                <p className="text-gray-400">No communities found.</p>
               </div>
-            </Link>
-          ))}
-        </div>
-      </section>
+            )}
+          </div>
+        </main>
+
+        {/* Right Panel */}
+        <aside className="hidden lg:block lg:col-span-3">
+          <div className="sticky top-10 space-y-6">
+            <section className="bg-white border border-gray-200 rounded-lg p-5">
+              <h3 className="text-sm font-bold text-gray-900 mb-3">
+                About CampusSphere
+              </h3>
+              <div className="text-[13px] text-gray-600 space-y-3 leading-relaxed">
+                <p>
+                  A minimal space for campus-wide coordination and deep-dive discussions.
+                </p>
+                <div className="pt-3 border-t border-gray-100">
+                  <div className="flex justify-between py-1">
+                    <span className="text-gray-400">Status</span>
+                    <span className="text-green-600 font-medium">Online</span>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <footer className="px-2 text-[11px] text-gray-400 flex flex-wrap gap-x-3 gap-y-1 uppercase tracking-widest">
+              <a href="#" className="hover:text-gray-600">Privacy</a>
+              <a href="#" className="hover:text-gray-600">Terms</a>
+              <a href="#" className="hover:text-gray-600">Guidelines</a>
+              <span>© 2026</span>
+            </footer>
+          </div>
+        </aside>
+
+      </div>
     </div>
   );
 }

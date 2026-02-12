@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import api from "../api/axios";
-import { MessageSquare, Send, User, Clock, ChevronDown, ChevronUp, PenTool } from "lucide-react";
+import { MessageSquare, Send, User, Clock, ChevronDown, ChevronUp, PenTool, ArrowLeft, Loader2 } from "lucide-react";
 
 function CommunityDetail() {
   const { id } = useParams();
@@ -11,6 +11,7 @@ function CommunityDetail() {
   const [comments, setComments] = useState({});
   const [expandedComments, setExpandedComments] = useState({});
   const [loading, setLoading] = useState(false);
+  const [isPageLoading, setIsPageLoading] = useState(true);
 
   const fetchPosts = async () => {
     try {
@@ -18,6 +19,8 @@ function CommunityDetail() {
       setPosts(res.data);
     } catch (err) {
       console.error(err);
+    } finally {
+      setIsPageLoading(false);
     }
   };
 
@@ -42,56 +45,82 @@ function CommunityDetail() {
       return;
     }
 
-    const res = await api.get(`/comments/post/${postId}`);
-    setComments((prev) => ({ ...prev, [postId]: res.data }));
-    setExpandedComments((prev) => ({ ...prev, [postId]: true }));
+    try {
+      const res = await api.get(`/comments/post/${postId}`);
+      setComments((prev) => ({ ...prev, [postId]: res.data }));
+      setExpandedComments((prev) => ({ ...prev, [postId]: true }));
+    } catch (err) {
+      console.error("Error fetching comments", err);
+    }
   };
 
   const createComment = async (postId, commentContent) => {
-    await api.post("/comments", { post_id: postId, content: commentContent });
-    // Refresh comments
-    const res = await api.get(`/comments/post/${postId}`);
-    setComments((prev) => ({ ...prev, [postId]: res.data }));
+    try {
+      await api.post("/comments", { post_id: postId, content: commentContent });
+      const res = await api.get(`/comments/post/${postId}`);
+      setComments((prev) => ({ ...prev, [postId]: res.data }));
+    } catch (err) {
+      alert("Failed to post comment");
+    }
   };
 
   useEffect(() => {
     fetchPosts();
   }, [id]);
 
+  if (isPageLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[#f9fafb]">
+        <Loader2 className="animate-spin text-gray-400" size={32} />
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-white p-4 md:p-8">
-      <div className="max-w-4xl mx-auto">
-        
-        {/* Header */}
-        <div className="flex items-center gap-4 mb-10">
-          <div className="h-16 w-16 rounded-2xl bg-gradient-to-br from-indigo-600 to-purple-700 flex items-center justify-center shadow-lg shadow-indigo-500/20">
-            <MessageSquare size={32} />
-          </div>
-          <div>
-            <h1 className="text-4xl font-bold tracking-tight">Community Feed</h1>
-            <p className="text-gray-500">Share your thoughts and join the discussion.</p>
-          </div>
+    <div className="min-h-screen bg-[#f9fafb] text-gray-900 pb-20">
+      {/* Top Nav Bar */}
+      <nav className="sticky top-0 z-10 bg-white/80 backdrop-blur-md border-b border-gray-200 mb-8">
+        <div className="max-w-4xl mx-auto px-6 h-16 flex items-center">
+          <Link to="/" className="flex items-center gap-2 text-sm font-medium text-gray-500 hover:text-gray-900 transition-colors">
+            <ArrowLeft size={16} />
+            Back to Communities
+          </Link>
         </div>
+      </nav>
+
+      <div className="max-w-4xl mx-auto px-6">
+        {/* Community Identity */}
+        <header className="mb-12">
+          <div className="flex items-center gap-5 mb-4">
+            <div className="h-14 w-14 rounded-xl bg-gray-900 flex items-center justify-center text-white">
+              <MessageSquare size={28} />
+            </div>
+            <div>
+              <h1 className="text-3xl font-bold tracking-tight">Community Feed</h1>
+              <p className="text-gray-500">Circle ID: {id} • Active Discussions</p>
+            </div>
+          </div>
+        </header>
 
         {/* Create Post Section */}
-        <div className="bg-white/[0.03] border border-white/10 rounded-3xl p-6 mb-12 backdrop-blur-md">
-          <div className="flex items-center gap-2 mb-6 text-indigo-400 font-medium">
-            <PenTool size={18} />
-            <span>Create New Thread</span>
+        <section className="bg-white border border-gray-200 rounded-xl p-6 mb-12 shadow-sm">
+          <div className="flex items-center gap-2 mb-6 text-xs font-bold uppercase tracking-widest text-gray-400">
+            <PenTool size={14} />
+            <span>Start a new thread</span>
           </div>
           <form onSubmit={createPost} className="space-y-4">
             <input
               type="text"
-              placeholder="What's on your mind?"
-              className="w-full p-4 bg-black/40 border border-white/10 rounded-2xl focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all placeholder:text-gray-600 font-semibold"
+              placeholder="Topic title"
+              className="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:bg-white focus:border-blue-500 transition-all font-semibold"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               required
             />
             <textarea
-              placeholder="Deep dive into your thoughts..."
-              rows="4"
-              className="w-full p-4 bg-black/40 border border-white/10 rounded-2xl focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all placeholder:text-gray-600 resize-none"
+              placeholder="What would you like to discuss?"
+              rows="3"
+              className="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:bg-white focus:border-blue-500 transition-all resize-none"
               value={content}
               onChange={(e) => setContent(e.target.value)}
               required
@@ -99,66 +128,75 @@ function CommunityDetail() {
             <div className="flex justify-end">
               <button 
                 disabled={loading}
-                className="bg-indigo-600 hover:bg-indigo-500 text-white px-8 py-3 rounded-xl font-bold flex items-center gap-2 transition-all disabled:opacity-50"
+                className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-semibold text-sm flex items-center gap-2 transition-all disabled:opacity-50"
               >
-                {loading ? "Posting..." : "Publish Post"}
-                <Send size={18} />
+                {loading ? "Posting..." : "Post to Feed"}
+                <Send size={16} />
               </button>
             </div>
           </form>
-        </div>
+        </section>
 
         {/* Posts List */}
-        <div className="space-y-8">
-          <h2 className="text-xl font-bold flex items-center gap-2 text-gray-400 mb-4">
-            Recent Discussions
-          </h2>
+        <div className="space-y-6">
+          <div className="flex items-center gap-2 border-b border-gray-200 pb-4 mb-8 text-gray-400">
+            <Clock size={16} />
+            <span className="text-[11px] font-bold uppercase tracking-widest">Recent Activity</span>
+          </div>
           
           {posts.map((post) => (
-            <article key={post.id} className="group bg-white/[0.02] border border-white/5 rounded-3xl p-6 hover:bg-white/[0.04] transition-all">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="h-10 w-10 rounded-full bg-indigo-500/10 flex items-center justify-center text-indigo-400">
-                  <User size={20} />
-                </div>
-                <div>
-                  <p className="text-sm font-bold text-gray-200">@{post.author || 'Anonymous'}</p>
-                  <div className="flex items-center gap-2 text-xs text-gray-500">
-                    <Clock size={12} />
-                    <span>Posted recently</span>
+            <article key={post.id} className="bg-white border border-gray-200 rounded-xl overflow-hidden transition-all hover:border-gray-300">
+              <div className="p-6">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="h-8 w-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-500">
+                    <User size={16} />
+                  </div>
+                  <div>
+                    <p className="text-sm font-bold text-gray-900">@{post.author || 'student_user'}</p>
+                    <p className="text-[11px] text-gray-400">posted in general</p>
                   </div>
                 </div>
+
+                <h3 className="text-xl font-bold mb-3 text-gray-900 leading-tight">{post.title}</h3>
+                <p className="text-gray-600 leading-relaxed mb-6 text-sm">{post.content}</p>
+
+                <button
+                  onClick={() => toggleComments(post.id)}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold transition-all ${
+                    expandedComments[post.id] 
+                    ? 'bg-blue-50 text-blue-600' 
+                    : 'bg-gray-50 text-gray-500 hover:bg-gray-100'
+                  }`}
+                >
+                  <MessageSquare size={14} />
+                  {expandedComments[post.id] ? "Close Discussion" : "View Comments"}
+                  {expandedComments[post.id] ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+                </button>
               </div>
-
-              <h3 className="text-2xl font-bold mb-3 group-hover:text-indigo-300 transition-colors">{post.title}</h3>
-              <p className="text-gray-400 leading-relaxed mb-6">{post.content}</p>
-
-              <button
-                onClick={() => toggleComments(post.id)}
-                className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all ${
-                  expandedComments[post.id] 
-                  ? 'bg-indigo-500 text-white' 
-                  : 'bg-white/5 text-gray-400 hover:bg-white/10'
-                }`}
-              >
-                <MessageSquare size={16} />
-                {expandedComments[post.id] ? "Hide Discussion" : "View Discussion"}
-                {expandedComments[post.id] ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-              </button>
 
               {/* Comments Section */}
               {expandedComments[post.id] && (
-                <div className="mt-8 pt-8 border-t border-white/5 space-y-4 animate-in fade-in slide-in-from-top-4 duration-300">
-                  {comments[post.id]?.map((comment) => (
-                    <div key={comment.id} className="flex gap-3">
-                      <div className="h-8 w-8 rounded-full bg-white/5 flex items-center justify-center text-gray-500 shrink-0">
-                        <User size={14} />
-                      </div>
-                      <div className="bg-white/5 p-4 rounded-2xl rounded-tl-none flex-1">
-                        <p className="text-xs font-bold text-indigo-400 mb-1">{comment.author}</p>
-                        <p className="text-sm text-gray-300">{comment.content}</p>
-                      </div>
-                    </div>
-                  ))}
+                <div className="bg-gray-50/50 border-t border-gray-100 p-6 space-y-6">
+                  <div className="space-y-4">
+                    {comments[post.id]?.length > 0 ? (
+                      comments[post.id].map((comment) => (
+                        <div key={comment.id} className="flex gap-3">
+                          <div className="h-6 w-6 rounded-full bg-gray-200 flex items-center justify-center text-gray-400 shrink-0 mt-1">
+                            <User size={12} />
+                          </div>
+                          <div className="flex-1">
+                            <div className="flex items-baseline gap-2 mb-1">
+                              <p className="text-xs font-bold text-gray-900">{comment.author}</p>
+                              <span className="text-[10px] text-gray-400 uppercase tracking-tighter">Verified Member</span>
+                            </div>
+                            <p className="text-sm text-gray-600 leading-normal">{comment.content}</p>
+                          </div>
+                        </div>
+                      ))
+                    ) : (
+                      <p className="text-xs text-gray-400 italic">No comments yet. Start the conversation!</p>
+                    )}
+                  </div>
 
                   <CommentForm postId={post.id} onSubmit={createComment} />
                 </div>
@@ -181,17 +219,17 @@ function CommentForm({ postId, onSubmit }) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="mt-6 relative">
+    <form onSubmit={handleSubmit} className="mt-4 relative">
       <input
         type="text"
-        placeholder="Write a thoughtful reply..."
-        className="w-full p-4 pr-16 bg-black border border-white/10 rounded-2xl focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm transition-all"
+        placeholder="Reply to this thread..."
+        className="w-full py-2.5 pl-4 pr-12 bg-white border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-400 transition-all shadow-sm"
         value={text}
         onChange={(e) => setText(e.target.value)}
         required
       />
-      <button className="absolute right-2 top-1/2 -translate-y-1/2 p-2 text-indigo-400 hover:bg-indigo-500/10 rounded-xl transition-all">
-        <Send size={20} />
+      <button className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 text-blue-500 hover:bg-blue-50 rounded-md transition-all">
+        <Send size={16} />
       </button>
     </form>
   );

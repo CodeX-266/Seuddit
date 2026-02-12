@@ -67,7 +67,8 @@ router.post("/join/:communityId", authMiddleware, async (req, res) => {
 router.get("/", async (req, res) => {
   try {
     const communities = await pool.query(
-      "SELECT * FROM communities ORDER BY created_at DESC"
+      "SELECT * FROM communities WHERE deleted_at IS NULL ORDER BY created_at DESC"
+
     );
 
     res.json(communities.rows);

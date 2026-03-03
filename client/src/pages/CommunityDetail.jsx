@@ -126,7 +126,7 @@ function CommunityDetail() {
               required
             />
             <div className="flex justify-end">
-              <button 
+              <button
                 disabled={loading}
                 className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-semibold text-sm flex items-center gap-2 transition-all disabled:opacity-50"
               >
@@ -143,7 +143,7 @@ function CommunityDetail() {
             <Clock size={16} />
             <span className="text-[11px] font-bold uppercase tracking-widest">Recent Activity</span>
           </div>
-          
+
           {posts.map((post) => (
             <article key={post.id} className="bg-white border border-gray-200 rounded-xl overflow-hidden transition-all hover:border-gray-300">
               <div className="p-6">
@@ -162,11 +162,10 @@ function CommunityDetail() {
 
                 <button
                   onClick={() => toggleComments(post.id)}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold transition-all ${
-                    expandedComments[post.id] 
-                    ? 'bg-blue-50 text-blue-600' 
-                    : 'bg-gray-50 text-gray-500 hover:bg-gray-100'
-                  }`}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold transition-all ${expandedComments[post.id]
+                      ? 'bg-blue-50 text-blue-600'
+                      : 'bg-gray-50 text-gray-500 hover:bg-gray-100'
+                    }`}
                 >
                   <MessageSquare size={14} />
                   {expandedComments[post.id] ? "Close Discussion" : "View Comments"}

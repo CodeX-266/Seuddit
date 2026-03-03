@@ -113,4 +113,60 @@ router.delete("/:id", authMiddleware, async (req, res) => {
   }
 });
 
+router.get("/:id/membership", authMiddleware, async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const membership = await pool.query(
+      `SELECT role FROM community_members
+       WHERE user_id = $1 AND community_id = $2`,
+      [req.user.userId, id]
+    );
+
+    if (membership.rows.length === 0) {
+      return res.json({ isMember: false });
+    }
+
+    res.json({
+      isMember: true,
+      role: membership.rows[0].role,
+    });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+router.delete("/leave/:communityId", authMiddleware, async (req, res) => {
+  try {
+    const { communityId } = req.params;
+
+    // Prevent owner from leaving
+    const membership = await pool.query(
+      `SELECT role FROM community_members
+       WHERE user_id = $1 AND community_id = $2`,
+      [req.user.userId, communityId]
+    );
+
+    if (
+      membership.rows.length === 0 ||
+      membership.rows[0].role === "owner"
+    ) {
+      return res.status(403).json({ message: "Cannot leave community" });
+    }
+
+    await pool.query(
+      `DELETE FROM community_members
+       WHERE user_id = $1 AND community_id = $2`,
+      [req.user.userId, communityId]
+    );
+
+    res.json({ message: "Left community" });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
 module.exports = router;

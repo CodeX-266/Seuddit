@@ -4,6 +4,16 @@ const authMiddleware = require("../middleware/authMiddleware");
 
 const router = express.Router();
 
+const membership = await pool.query(
+  `SELECT 1 FROM community_members
+   WHERE user_id = $1 AND community_id = $2`,
+  [req.user.userId, communityId]
+);
+
+if (membership.rows.length === 0) {
+  return res.status(403).json({ message: "Join community to post" });
+}
+
 /* CREATE POST */
 router.post("/", authMiddleware, async (req, res) => {
   try {

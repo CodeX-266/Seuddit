@@ -256,14 +256,7 @@ function CommunityDetail() {
                   Join Community
                 </button>
               )
-            ) : (
-              <Link
-                to="/login"
-                className="flex items-center gap-1.5 px-4 py-2 bg-gray-900 text-white hover:bg-gray-800 rounded-lg text-sm font-bold transition-colors"
-              >
-                Sign In
-              </Link>
-            )}
+            ) : null}
           </div>
         </div>
       </nav>
@@ -338,21 +331,7 @@ function CommunityDetail() {
               Join Community
             </button>
           </section>
-        ) : (
-          <section className="bg-white border-2 border-dashed border-gray-300 rounded-xl p-10 mb-12 text-center">
-            <Lock size={32} className="mx-auto text-gray-300 mb-4" />
-            <h3 className="text-lg font-bold text-gray-700 mb-2">Sign in to Participate</h3>
-            <p className="text-gray-500 text-sm mb-6 max-w-md mx-auto">
-              Login or register to join communities, create posts, and engage in discussions.
-            </p>
-            <Link
-              to="/login"
-              className="inline-flex items-center gap-2 px-6 py-2.5 bg-gray-900 text-white hover:bg-gray-800 rounded-lg font-bold text-sm transition-colors"
-            >
-              Sign In
-            </Link>
-          </section>
-        )}
+        ) : null}
 
         {/* ── Posts List ── */}
         <div className="space-y-6">
@@ -378,8 +357,8 @@ function CommunityDetail() {
                     <button
                       onClick={() => voteOnPost(post.id, "UPVOTE")}
                       className={`p-1.5 rounded-md transition-all ${postVotes[post.id] === "UPVOTE"
-                          ? "text-blue-600 bg-blue-50"
-                          : "text-gray-400 hover:text-blue-600 hover:bg-blue-50"
+                        ? "text-blue-600 bg-blue-50"
+                        : "text-gray-400 hover:text-blue-600 hover:bg-blue-50"
                         }`}
                       title="Upvote"
                     >
@@ -388,10 +367,10 @@ function CommunityDetail() {
 
                     <span
                       className={`text-sm font-bold min-w-[2ch] text-center tabular-nums ${postVotes[post.id] === "UPVOTE"
-                          ? "text-blue-600"
-                          : postVotes[post.id] === "DOWNVOTE"
-                            ? "text-red-500"
-                            : "text-gray-700"
+                        ? "text-blue-600"
+                        : postVotes[post.id] === "DOWNVOTE"
+                          ? "text-red-500"
+                          : "text-gray-700"
                         }`}
                     >
                       {post.vote_score || 0}
@@ -400,8 +379,8 @@ function CommunityDetail() {
                     <button
                       onClick={() => voteOnPost(post.id, "DOWNVOTE")}
                       className={`p-1.5 rounded-md transition-all ${postVotes[post.id] === "DOWNVOTE"
-                          ? "text-red-500 bg-red-50"
-                          : "text-gray-400 hover:text-red-500 hover:bg-red-50"
+                        ? "text-red-500 bg-red-50"
+                        : "text-gray-400 hover:text-red-500 hover:bg-red-50"
                         }`}
                       title="Downvote"
                     >
@@ -433,8 +412,8 @@ function CommunityDetail() {
                     <button
                       onClick={() => toggleComments(post.id)}
                       className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold transition-all ${expandedComments[post.id]
-                          ? "bg-blue-50 text-blue-600"
-                          : "bg-gray-50 text-gray-500 hover:bg-gray-100"
+                        ? "bg-blue-50 text-blue-600"
+                        : "bg-gray-50 text-gray-500 hover:bg-gray-100"
                         }`}
                     >
                       <MessageSquare size={14} />
@@ -457,18 +436,18 @@ function CommunityDetail() {
                               <button
                                 onClick={() => voteOnComment(post.id, comment.id, "UPVOTE")}
                                 className={`p-0.5 rounded transition-all ${commentVotes[comment.id] === "UPVOTE"
-                                    ? "text-blue-600"
-                                    : "text-gray-300 hover:text-blue-600"
+                                  ? "text-blue-600"
+                                  : "text-gray-300 hover:text-blue-600"
                                   }`}
                               >
                                 <ChevronUp size={14} strokeWidth={2.5} />
                               </button>
                               <span
                                 className={`text-[11px] font-bold tabular-nums ${commentVotes[comment.id] === "UPVOTE"
-                                    ? "text-blue-600"
-                                    : commentVotes[comment.id] === "DOWNVOTE"
-                                      ? "text-red-500"
-                                      : "text-gray-500"
+                                  ? "text-blue-600"
+                                  : commentVotes[comment.id] === "DOWNVOTE"
+                                    ? "text-red-500"
+                                    : "text-gray-500"
                                   }`}
                               >
                                 {comment.vote_score || 0}
@@ -476,8 +455,8 @@ function CommunityDetail() {
                               <button
                                 onClick={() => voteOnComment(post.id, comment.id, "DOWNVOTE")}
                                 className={`p-0.5 rounded transition-all ${commentVotes[comment.id] === "DOWNVOTE"
-                                    ? "text-red-500"
-                                    : "text-gray-300 hover:text-red-500"
+                                  ? "text-red-500"
+                                  : "text-gray-300 hover:text-red-500"
                                   }`}
                               >
                                 <ChevronDown size={14} strokeWidth={2.5} />

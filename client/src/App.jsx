@@ -5,6 +5,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import CommunityDetail from "./pages/CommunityDetail";
 import Communities from "./pages/Communities";
+import LostAndFound from "./pages/LostAndFound";
 import { LogOut } from "lucide-react";
 
 function App() {
@@ -31,7 +32,7 @@ function App() {
 
       {/* Clean Minimal Navbar */}
       <nav className="sticky top-0 z-50 bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center">
-        
+
         <div className="flex items-center gap-8">
           <Link
             to="/"
@@ -41,11 +42,14 @@ function App() {
           </Link>
 
           <div className="hidden md:flex items-center gap-6 text-sm text-gray-600">
-            <Link to="/" className="hover:text-gray-900 transition">
+            <Link to="/" className="hover:text-gray-900 transition font-medium">
               Home
             </Link>
-            <Link to="/all" className="hover:text-gray-900 transition">
+            <Link to="/all" className="hover:text-gray-900 transition font-medium">
               Explore
+            </Link>
+            <Link to="/lost-and-found" className="text-indigo-600 hover:text-indigo-900 transition font-bold bg-indigo-50 px-3 py-1.5 rounded-lg border border-indigo-100">
+              Lost & Found
             </Link>
           </div>
         </div>
@@ -54,13 +58,13 @@ function App() {
           {token ? (
             <button
               onClick={handleLogout}
-              className="flex items-center gap-2 px-4 py-2 text-sm border border-gray-300 rounded-md hover:bg-gray-100 transition"
+              className="flex items-center gap-2 px-4 py-2 text-sm font-medium border border-gray-300 rounded-lg hover:bg-gray-100 transition"
             >
               <LogOut size={16} />
               Logout
             </button>
           ) : (
-            <div className="flex items-center gap-4 text-sm">
+            <div className="flex items-center gap-4 text-sm font-medium">
               <Link
                 to="/login"
                 className="text-gray-600 hover:text-gray-900 transition"
@@ -69,7 +73,7 @@ function App() {
               </Link>
               <Link
                 to="/register"
-                className="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-100 transition"
+                className="px-4 py-2 border border-gray-300 rounded-lg text-white bg-gray-900 hover:bg-gray-800 hover:text-white transition shadow-sm"
               >
                 Register
               </Link>
@@ -84,6 +88,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/all" element={<Communities />} />
           <Route path="/community/:id" element={<CommunityDetail />} />
+          <Route path="/lost-and-found" element={<LostAndFound />} />
           <Route path="/login" element={<Login setToken={setToken} />} />
           <Route path="/register" element={<Register />} />
         </Routes>

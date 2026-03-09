@@ -25,6 +25,8 @@ app.use("/api/comments", commentRoutes);
 const voteRoutes = require("./routes/voteRoutes");
 app.use("/api/votes", voteRoutes);
 
+const lostAndFoundRoutes = require("./routes/lostAndFoundRoutes");
+app.use("/api/lost-and-found", lostAndFoundRoutes);
 
 app.get("/", (req, res) => {
   res.send("CampusSphere Backend Running");

@@ -11,7 +11,8 @@ import { toast } from "react-toastify";
 export default function MessMenu() {
     const [menu, setMenu] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [activeDay, setActiveDay] = useState(new Intl.DateTimeFormat('en-US', { weekday: 'long' }).format(new Date()));
+    const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+    const [activeDay, setActiveDay] = useState(days[new Date().getDay()]);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -38,7 +39,6 @@ export default function MessMenu() {
         }
     };
 
-    const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
     const currentDayMenu = menu.filter(m => m.day === activeDay);
 
     const MealIcon = ({ type }) => {
@@ -70,7 +70,7 @@ export default function MessMenu() {
                     <div>
                         <h1 className="text-3xl font-black tracking-tight text-gray-900">Mess Menu</h1>
                         <p className="text-gray-500 font-medium flex items-center gap-2">
-                            VIT Chennai • Today is {new Intl.DateTimeFormat('en-US', { weekday: 'long' }).format(new Date())}
+                            VIT Chennai • Today is {days[new Date().getDay()]}
                         </p>
                     </div>
                 </div>

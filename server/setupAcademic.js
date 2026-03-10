@@ -24,6 +24,9 @@ async function setupAcademic() {
       );
     `);
 
+        // Truncate to refresh samples
+        await client.query('TRUNCATE TABLE academic_materials CASCADE;');
+
         // Add Index for search
         await client.query(`CREATE INDEX IF NOT EXISTS idx_course_code ON academic_materials(course_code);`);
 
@@ -37,9 +40,17 @@ async function setupAcademic() {
         ('CSE2001', 'Computer Architecture', 'Notes', 'Fall 2024', 'Dr. Priya S', '#', 'Comprehensive handwritten notes for Modules 3-5.'),
         ('MAT1001', 'Calculus', 'Materials', 'Winter 2023', 'Prof. Sharma', '#', 'Official Question Bank for FAT preparation including past 5 year trends.'),
         ('CSE3001', 'Software Engineering', 'PYQ', 'Fall 2023', 'Dr. Anita V', '#', 'CAT-2 Final Question Paper with marked marking scheme.'),
-        ('STS1001', 'Soft Skills', 'Notes', 'Winter 2024', 'Prof. Arjun', '#', 'Placement specific aptitude shortcuts and formula sheet.');
+        ('STS1001', 'Soft Skills', 'Notes', 'Winter 2024', 'Prof. Arjun', '#', 'Placement specific aptitude shortcuts and formula sheet.'),
+        ('CSE2002', 'Operating Systems', 'PYQ', 'Winter 2024', 'Dr. S. Moorthy', '#', 'FAT 2023 solved paper with process scheduling diagrams.'),
+        ('MAT2001', 'Statistics and Probability', 'Notes', 'Fall 2024', 'Prof. Lakshmi', '#', 'Handwritten notes for probability distributions and testing of hypothesis.'),
+        ('PHY1001', 'Engineering Physics', 'Materials', 'Winter 2023', 'Dr. K. Nair', '#', 'Lab Manual and previous year assignment solutions (CAT-1/CAT-2).'),
+        ('CHY1001', 'Engineering Chemistry', 'PYQ', 'Winter 2024', 'Prof. Reddy', '#', 'CAT-1 question paper from last year (Morning Slot)'),
+        ('EEE1001', 'Basic Electrical Engineering', 'PYQ', 'Fall 2024', 'Dr. G. Venkat', '#', 'Detailed step-by-step solutions for KVL/KCL and AC circuit problems.'),
+        ('HUM1001', 'Ethics and Values', 'Materials', 'Fall 2024', 'Dr. Zarina', '#', 'PDF of all case studies discussed in class for CAT-2 preparation.'),
+        ('BME1001', 'Thermodynamics', 'Notes', 'Winter 2024', 'Prof. Vignesh', '#', 'Simplified notes for the first three laws and Carnot cycle.'),
+        ('FRE1001', 'French Language', 'Notes', 'Fall 2024', 'Madame Sophie', '#', 'Self-study guide for common dialogues and grammar rules for J-component.');
       `);
-            console.log('Seeded example academic materials.');
+            console.log('Seeded expanded academic materials library.');
         }
 
         console.log('Academic Materials table is ready.');

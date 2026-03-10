@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const pool = require('../config/db');
-const authMiddleware = require('../middleware/auth');
+const authMiddleware = require('../middleware/authMiddleware');
 
 // Get all materials or filter
 router.get('/', async (req, res) => {
@@ -45,7 +45,7 @@ router.post('/', authMiddleware, async (req, res) => {
             `INSERT INTO academic_materials 
       (course_code, course_name, category, semester, faculty_name, file_url, description, uploader_id) 
       VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *`,
-            [course_code, course_name, category, semester, faculty_name, file_url, description, req.user.id]
+            [course_code, course_name, category, semester, faculty_name, file_url, description, req.user.userId]
         );
         res.status(201).json(result.rows[0]);
     } catch (err) {

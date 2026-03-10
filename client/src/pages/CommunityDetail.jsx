@@ -6,6 +6,7 @@ import {
   PenTool, ArrowLeft, Loader2, UserPlus, UserMinus, Trash2,
   Shield, Lock
 } from "lucide-react";
+import { toast } from "react-toastify";
 
 function CommunityDetail() {
   const { id } = useParams();
@@ -75,8 +76,9 @@ function CommunityDetail() {
       await api.post(`/communities/join/${id}`);
       setIsMember(true);
       setMemberRole("member");
+      toast.success("Joined community! Welcome to the tribe.");
     } catch (err) {
-      alert(err.response?.data?.message || "Failed to join community");
+      toast.error(err.response?.data?.message || "Failed to join community");
     } finally {
       setMembershipLoading(false);
     }
@@ -88,8 +90,9 @@ function CommunityDetail() {
       await api.delete(`/communities/leave/${id}`);
       setIsMember(false);
       setMemberRole(null);
+      toast.info("Left community.");
     } catch (err) {
-      alert(err.response?.data?.message || "Failed to leave community");
+      toast.error(err.response?.data?.message || "Failed to leave community");
     } finally {
       setMembershipLoading(false);
     }
@@ -99,9 +102,10 @@ function CommunityDetail() {
     if (!confirm("Are you sure you want to delete this community? This action cannot be undone.")) return;
     try {
       await api.delete(`/communities/${id}`);
+      toast.success("Community deleted permanently.");
       navigate("/");
     } catch (err) {
-      alert(err.response?.data?.message || "Failed to delete community");
+      toast.error(err.response?.data?.message || "Failed to delete community");
     }
   };
 
@@ -115,8 +119,9 @@ function CommunityDetail() {
       setTitle("");
       setContent("");
       fetchPosts();
+      toast.success("New discussion thread started!");
     } catch (err) {
-      alert(err.response?.data?.message || "Error creating post");
+      toast.error(err.response?.data?.message || "Error creating post");
     } finally {
       setLoading(false);
     }
@@ -125,7 +130,7 @@ function CommunityDetail() {
   /* ── Voting ── */
 
   const voteOnPost = async (postId, voteType) => {
-    if (!token) return alert("Please login to vote");
+    if (!token) return toast.warning("Please login to vote");
     try {
       const res = await api.post("/votes/post", { post_id: postId, vote_type: voteType });
       setPosts((prev) =>
@@ -136,6 +141,7 @@ function CommunityDetail() {
       setPostVotes((prev) => ({ ...prev, [postId]: voteType }));
     } catch (err) {
       console.error("Vote failed", err);
+      toast.error("An error occurred while voting");
     }
   };
 
@@ -176,8 +182,9 @@ function CommunityDetail() {
       await api.post("/comments", { post_id: postId, content: commentContent });
       const res = await api.get(`/comments/post/${postId}`);
       setComments((prev) => ({ ...prev, [postId]: res.data }));
+      toast.success("Replied to thread.");
     } catch (err) {
-      alert("Failed to post comment");
+      toast.error("Failed to post comment");
     }
   };
 

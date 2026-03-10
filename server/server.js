@@ -31,6 +31,9 @@ app.use("/api/lost-and-found", lostAndFoundRoutes);
 const academicRoutes = require("./routes/academicRoutes");
 app.use("/api/academic", academicRoutes);
 
+const messRoutes = require("./routes/messRoutes");
+app.use("/api/mess", messRoutes);
+
 app.get("/", (req, res) => {
   res.send("CampusSphere Backend Running");
 });

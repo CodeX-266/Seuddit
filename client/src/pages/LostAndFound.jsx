@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Plus, MapPin, Tag, CheckCircle, Clock, Home as HomeIcon, Compass, Search } from "lucide-react";
 import api from "../api/axios";
+import { toast } from "react-toastify";
 
 export default function LostAndFound() {
     const [items, setItems] = useState([]);
@@ -9,8 +10,8 @@ export default function LostAndFound() {
     const [error, setError] = useState("");
     const [showForm, setShowForm] = useState(false);
     const location = useLocation();
+    const navigate = useNavigate();
 
-    // Form State
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
     const [type, setType] = useState("lost");
@@ -21,8 +22,14 @@ export default function LostAndFound() {
     const categories = ["Electronics", "Accessories", "Books & Notes", "Clothing", "Other"];
 
     useEffect(() => {
+        const token = localStorage.getItem("token");
+        if (!token) {
+            toast.warning("Sign in to check Lost & Found items!");
+            navigate("/login");
+            return;
+        }
         fetchItems();
-    }, []);
+    }, [navigate]);
 
     const fetchItems = async () => {
         try {
@@ -46,9 +53,10 @@ export default function LostAndFound() {
             setShowForm(false);
             resetForm();
             fetchItems();
+            toast.success("Successfully reported item!");
         } catch (err) {
             console.error("Failed to post article", err);
-            alert("Please login to post a lost/found item.");
+            toast.error(err.response?.data?.message || "Login to report lost/found items.");
         }
     };
 
@@ -65,9 +73,10 @@ export default function LostAndFound() {
         try {
             await api.patch(`/lost-and-found/${id}/resolve`);
             fetchItems();
+            toast.success("Item marked as resolved!");
         } catch (err) {
             console.error("Failed to resolve item", err);
-            alert("Only the creator can resolve this post.");
+            toast.error(err.response?.data?.message || "Only the creator can resolve this post.");
         }
     };
 
@@ -77,8 +86,8 @@ export default function LostAndFound() {
             <Link
                 to={to}
                 className={`flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors ${isActive
-                        ? "bg-gray-200 text-gray-900"
-                        : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
+                    ? "bg-gray-200 text-gray-900"
+                    : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
                     }`}
             >
                 <Icon size={18} strokeWidth={isActive ? 2.5 : 2} />

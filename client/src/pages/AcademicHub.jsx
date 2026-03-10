@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import axios from "../api/axios";
 import {
     Search, BookOpen, FileText, Download, GraduationCap,
     Home as HomeIcon, Compass, Search as SearchIcon, Map as MapIcon,
     Plus, Filter, X, Loader2, User, Clock, Check
 } from "lucide-react";
+import { toast } from "react-toastify";
 
 export default function AcademicHub() {
     const [materials, setMaterials] = useState([]);
@@ -22,12 +23,19 @@ export default function AcademicHub() {
         description: ""
     });
     const [uploading, setUploading] = useState(false);
+    const navigate = useNavigate();
 
     const location = useLocation();
 
     useEffect(() => {
+        const token = localStorage.getItem("token");
+        if (!token) {
+            toast.warning("Sign in to access study materials!");
+            navigate("/login");
+            return;
+        }
         fetchMaterials();
-    }, [searchQuery, activeTab]);
+    }, [searchQuery, activeTab, navigate]);
 
     const fetchMaterials = async () => {
         setLoading(true);
@@ -59,9 +67,10 @@ export default function AcademicHub() {
                 semester: "Winter 2024", faculty_name: "", description: ""
             });
             fetchMaterials();
+            toast.success("Successfully uploaded study material! Thanks for contributing.");
         } catch (error) {
             console.error("Upload failed:", error);
-            alert("Upload failed. Are you logged in?");
+            toast.error(error.response?.data?.message || "Upload failed. Check if you're logged in.");
         } finally {
             setUploading(false);
         }
@@ -72,10 +81,10 @@ export default function AcademicHub() {
         return (
             <Link
                 to={to}
-                className={`flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors ${isActive
+                className={`flex items - center gap - 3 px - 3 py - 2 rounded - md text - sm font - medium transition - colors ${isActive
                     ? "bg-gray-200 text-gray-900"
                     : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
-                    }`}
+                    } `}
             >
                 <Icon size={18} strokeWidth={isActive ? 2.5 : 2} />
                 {children}
@@ -154,10 +163,11 @@ export default function AcademicHub() {
                                 <button
                                     key={tab}
                                     onClick={() => setActiveTab(tab)}
-                                    className={`px-5 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition-all whitespace-nowrap
+                                    className={`px - 5 py - 2 rounded - full text - xs font - bold uppercase tracking - wider transition - all whitespace - nowrap
                                         ${activeTab === tab
                                             ? "bg-indigo-600 text-white shadow-lg shadow-indigo-100"
-                                            : "bg-gray-100 text-gray-500 hover:bg-gray-200"}`}
+                                            : "bg-gray-100 text-gray-500 hover:bg-gray-200"
+                                        } `}
                                 >
                                     {tab}
                                 </button>
@@ -180,8 +190,8 @@ export default function AcademicHub() {
                                             <span className="text-[10px] font-bold uppercase tracking-widest bg-indigo-50 text-indigo-600 px-2 py-1 rounded">
                                                 {m.course_code}
                                             </span>
-                                            <span className={`text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded
-                                                ${m.category === 'PYQ' ? 'bg-orange-50 text-orange-600' : m.category === 'NOTES' ? 'bg-emerald-50 text-emerald-600' : 'bg-blue-50 text-blue-600'}`}>
+                                            <span className={`text - [10px] font - bold uppercase tracking - widest px - 2 py - 1 rounded
+                                                ${m.category === 'PYQ' ? 'bg-orange-50 text-orange-600' : m.category === 'NOTES' ? 'bg-emerald-50 text-emerald-600' : 'bg-blue-50 text-blue-600'} `}>
                                                 {m.category}
                                             </span>
                                         </div>

@@ -1,5 +1,6 @@
 import React, { useState, useMemo, useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import { MapContainer, TileLayer, Marker, Popup, useMap, ZoomControl } from "react-leaflet";
 import L from "leaflet";
 import {
@@ -186,6 +187,15 @@ export default function CampusMap() {
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedBuildingId, setSelectedBuildingId] = useState(null);
     const location = useLocation();
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        const token = localStorage.getItem("token");
+        if (!token) {
+            toast.warning("Please sign in to access the Campus Map!");
+            navigate("/login");
+        }
+    }, [navigate]);
 
     // Search Logic
     const matchingBuildings = useMemo(() => {

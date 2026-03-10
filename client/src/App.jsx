@@ -8,7 +8,10 @@ import Communities from "./pages/Communities";
 import LostAndFound from "./pages/LostAndFound";
 import CampusMap from "./pages/CampusMap";
 import AcademicHub from "./pages/AcademicHub";
-import { LogOut, Map, BookOpen } from "lucide-react";
+import MessMenu from "./pages/MessMenu";
+import { LogOut, Map, BookOpen, Utensils } from "lucide-react";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
   const [token, setToken] = useState(localStorage.getItem("token"));
@@ -31,6 +34,7 @@ function App() {
 
   return (
     <div className="min-h-screen bg-[#f3f4f6] text-gray-800 font-sans">
+      <ToastContainer position="top-right" autoClose={3000} />
 
       {/* Clean Minimal Navbar */}
       <nav className="sticky top-0 z-50 bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center">
@@ -43,12 +47,12 @@ function App() {
             CampusSphere
           </Link>
 
-          <div className="hidden md:flex items-center gap-6 text-sm text-gray-600">
+          <div className="flex items-center space-x-8 text-sm text-gray-600">
             <Link to="/" className="hover:text-gray-900 transition font-medium">
               Home
             </Link>
             <Link to="/all" className="hover:text-gray-900 transition font-medium">
-              Explore
+              Communities
             </Link>
             <Link to="/lost-and-found" className="hover:text-gray-900 transition font-medium">
               Lost & Found
@@ -56,7 +60,10 @@ function App() {
             <Link to="/map" className="hover:text-gray-900 transition font-medium">
               Map
             </Link>
-            <Link to="/academic" className="text-indigo-600 hover:text-indigo-900 transition font-bold bg-indigo-50 px-3 py-1.5 rounded-lg border border-indigo-100 flex items-center gap-1.5">
+            <Link to="/mess" className="flex items-center gap-1 hover:text-gray-900 transition font-bold text-amber-600 bg-amber-50 px-3 py-1.5 rounded-lg border border-amber-100 italic">
+              <Utensils size={16} /> Mess
+            </Link>
+            <Link to="/academic" className="text-indigo-600 hover:text-indigo-900 transition font-bold bg-indigo-50 px-3 py-1.5 rounded-lg border border-indigo-100 flex items-center gap-1.5 shadow-sm">
               <BookOpen size={16} /> Academics
             </Link>
           </div>
@@ -65,8 +72,13 @@ function App() {
         <div className="flex items-center gap-4">
           {token ? (
             <button
-              onClick={handleLogout}
-              className="flex items-center gap-2 px-4 py-2 text-sm font-medium border border-gray-300 rounded-lg hover:bg-gray-100 transition"
+              onClick={() => {
+                localStorage.removeItem("token");
+                setToken(null);
+                toast.info("Logged out successfully! Come back soon.");
+                navigate("/login");
+              }}
+              className="flex items-center gap-2 px-4 py-2 text-sm font-medium border border-gray-300 rounded-lg hover:bg-gray-100 transition shadow-sm"
             >
               <LogOut size={16} />
               Logout
@@ -99,6 +111,7 @@ function App() {
           <Route path="/lost-and-found" element={<LostAndFound />} />
           <Route path="/map" element={<CampusMap />} />
           <Route path="/academic" element={<AcademicHub />} />
+          <Route path="/mess" element={<MessMenu />} />
           <Route path="/login" element={<Login setToken={setToken} />} />
           <Route path="/register" element={<Register />} />
         </Routes>

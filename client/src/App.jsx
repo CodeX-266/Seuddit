@@ -1,4 +1,4 @@
-import { Routes, Route, Link, useNavigate } from "react-router-dom";
+import { Routes, Route, Link, useNavigate, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
@@ -6,7 +6,9 @@ import Register from "./pages/Register";
 import CommunityDetail from "./pages/CommunityDetail";
 import Communities from "./pages/Communities";
 import LostAndFound from "./pages/LostAndFound";
-import { LogOut } from "lucide-react";
+import CampusMap from "./pages/CampusMap";
+import AcademicHub from "./pages/AcademicHub";
+import { LogOut, Map, BookOpen } from "lucide-react";
 
 function App() {
   const [token, setToken] = useState(localStorage.getItem("token"));
@@ -48,8 +50,14 @@ function App() {
             <Link to="/all" className="hover:text-gray-900 transition font-medium">
               Explore
             </Link>
-            <Link to="/lost-and-found" className="text-indigo-600 hover:text-indigo-900 transition font-bold bg-indigo-50 px-3 py-1.5 rounded-lg border border-indigo-100">
+            <Link to="/lost-and-found" className="hover:text-gray-900 transition font-medium">
               Lost & Found
+            </Link>
+            <Link to="/map" className="hover:text-gray-900 transition font-medium">
+              Map
+            </Link>
+            <Link to="/academic" className="text-indigo-600 hover:text-indigo-900 transition font-bold bg-indigo-50 px-3 py-1.5 rounded-lg border border-indigo-100 flex items-center gap-1.5">
+              <BookOpen size={16} /> Academics
             </Link>
           </div>
         </div>
@@ -89,6 +97,8 @@ function App() {
           <Route path="/all" element={<Communities />} />
           <Route path="/community/:id" element={<CommunityDetail />} />
           <Route path="/lost-and-found" element={<LostAndFound />} />
+          <Route path="/map" element={<CampusMap />} />
+          <Route path="/academic" element={<AcademicHub />} />
           <Route path="/login" element={<Login setToken={setToken} />} />
           <Route path="/register" element={<Register />} />
         </Routes>

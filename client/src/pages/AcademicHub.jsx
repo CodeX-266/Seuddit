@@ -73,8 +73,8 @@ export default function AcademicHub() {
             <Link
                 to={to}
                 className={`flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors ${isActive
-                        ? "bg-gray-200 text-gray-900"
-                        : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
+                    ? "bg-gray-200 text-gray-900"
+                    : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
                     }`}
             >
                 <Icon size={18} strokeWidth={isActive ? 2.5 : 2} />
@@ -197,7 +197,16 @@ export default function AcademicHub() {
                                         </div>
                                     </div>
                                     <div className="md:border-l border-gray-100 md:pl-6 flex items-center justify-center">
-                                        <button className="flex items-center gap-2 bg-gray-900 text-white px-6 py-2.5 rounded-xl text-sm font-bold hover:bg-gray-800 transition-all shadow-sm">
+                                        <button
+                                            onClick={() => {
+                                                if (m.file_url && m.file_url !== "#") {
+                                                    window.open(m.file_url, "_blank");
+                                                } else {
+                                                    alert("This is a sample entry. In the live version, this will download the actual PDF/Image file.");
+                                                }
+                                            }}
+                                            className="flex items-center gap-2 bg-gray-900 text-white px-6 py-2.5 rounded-xl text-sm font-bold hover:bg-gray-800 transition-all shadow-sm hover:scale-105 active:scale-95 shadow-indigo-100"
+                                        >
                                             <Download size={16} /> Download
                                         </button>
                                     </div>
